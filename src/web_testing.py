@@ -1,6 +1,9 @@
 import os
 import time
+from datetime import date, datetime
 
+import pandas as pd
+from pandas.core.algorithms import mode
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -20,7 +23,7 @@ class WebTesting():
         link : str
             [description]
         """
-        service = Service('./src/ChromeDriver/chromedriver')
+        service = Service('./utils/chromedriver')
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -89,8 +92,14 @@ class WebTesting():
         WebTesting.send_keys_and_click_enter_from_element(button_imperial_login_password, password)
 
     
-    def get_latest_news_feed_of_module(self) -> None:
+    def get_latest_news_feed_of_module(self) -> str:
+        """[summary]
 
+        Returns
+        -------
+        str
+            [description]
+        """
         x_path_dat_algo_module = '//*[@id="main-content"]/section[3]/div/div/div/section/section[1]/div[2]/div/div/div[8]/div[2]/a'
         dat_algo_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_dat_algo_module)
         dat_algo_element.click()
@@ -102,7 +111,17 @@ class WebTesting():
         x_path_date_last_feed = '/html/body/div[1]/div/div[2]/section[2]/div/div/div[1]/div/section[1]/div/div/header/div/div[1]/article/div[2]/div/div[2]/span'
         last_posted_date_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_date_last_feed)
         last_posted_date_text = last_posted_date_element.text
-        print(last_posted_date_text)
+        return last_posted_date_text
+
+
+    def append_last_date_to_csv(self, last_feed_date : str):
+        
+        session_date = datetime.today()
+        session_date_str = session_date.strftime('%d %B %Y')
+
+        df = pd.DataFrame({'session_date': [session_date_str], 'last_feed_date': last_feed_date})
+        df.to_csv('src/report/report.csv', mode='a', sep=';', index=False, header=False)
+        
 
     def close_session(self) -> None:
         """[summary]
@@ -123,6 +142,8 @@ if __name__ == '__main__':
     # Not ideal to add a timeout, but this gives enough time for the two factor authentication
     time.sleep(20)
 
-    imperial.get_latest_news_feed_of_module()
+    last_date = imperial.get_latest_news_feed_of_module()
+
+    imperial.append_last_date_to_csv(last_date)
 
     imperial.close_session()
