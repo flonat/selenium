@@ -87,7 +87,7 @@ class WebTesting():
         button_imperial_login_password = WebTesting.get_web_element(self.driver, x_path_imperial_login_password)
         WebTesting.send_keys_and_click_enter_from_element(button_imperial_login_password, password)
 
-
+    #TODO: Finish this method
     def select_data_algo_module(self) -> None:
         x_path_dat_algo = '//*[@id="main-content"]/section[3]/div/div/div/section/section[1]/div[2]/div/div/div[8]/div[2]/h3'
 
@@ -96,6 +96,7 @@ class WebTesting():
         """[summary]
         """
         self.driver.close()    
+
 
 if __name__ == '__main__':
 
