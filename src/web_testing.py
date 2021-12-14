@@ -1,0 +1,114 @@
+import os
+import time
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+
+class WebTesting():
+
+    def __init__(self, link: str):
+        """[summary]
+
+        Parameters
+        ----------
+        link : str
+            [description]
+        """
+        service = Service('./src/ChromeDriver/chromedriver')
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        self.driver = webdriver.Chrome(service=service, options=options)
+        self.driver.get(link)
+
+
+    @staticmethod
+    def get_web_element(driver, x_path: str) -> WebElement:
+        """[summary]
+
+        Parameters
+        ----------
+        driver : [type]
+            [description]
+        x_path : str
+            [description]
+
+        Returns
+        -------
+        WebElement
+            [description]
+        """
+        element= WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, x_path))
+        )
+
+        return element
+
+
+    @staticmethod
+    def send_keys_and_click_enter_from_element(web_element, keys) -> None:
+        """[summary]
+
+        Parameters
+        ----------
+        web_element : [type]
+            [description]
+        keys : [type]
+            [description]
+        """
+        web_element.send_keys(keys)
+        web_element.send_keys(Keys.RETURN)
+
+
+    def log_in(self, user: str, password: str) -> None:
+        """[summary]
+            Assumes that no two-factor authentication is running
+        Parameters
+        ----------
+        user : str
+            [description]
+        password : str
+            [description]
+        """
+        css_path_insedi_login = 'a.button.is-fullwidth.is-centered'
+        button_insedi_login = self.driver.find_element(By.CSS_SELECTOR, css_path_insedi_login)
+        button_insedi_login.click()
+
+        x_path_imperial_login_user = '/html/body/div/form[1]/div/div/div[2]/div[1]/div/div/div/div/div[1]/div[3]/div/div/div/div[2]/div[2]/div/input[1]'
+        button_imperial_login_user = WebTesting.get_web_element(self.driver, x_path_imperial_login_user)
+        WebTesting.send_keys_and_click_enter_from_element(button_imperial_login_user, user)
+
+        x_path_imperial_login_password = '/html/body/div/form[1]/div/div/div[2]/div[1]/div/div/div/div/div/div[3]/div/div[2]/div/div[3]/div/div[2]/input'
+        button_imperial_login_password = WebTesting.get_web_element(self.driver, x_path_imperial_login_password)
+        WebTesting.send_keys_and_click_enter_from_element(button_imperial_login_password, password)
+
+
+    def select_data_algo_module(self) -> None:
+        x_path_dat_algo = '//*[@id="main-content"]/section[3]/div/div/div/section/section[1]/div[2]/div/div/div[8]/div[2]/h3'
+
+
+    def close_session(self) -> None:
+        """[summary]
+        """
+        self.driver.close()    
+
+if __name__ == '__main__':
+
+    user = os.environ.get('USER')
+    pwd = os.environ.get('PASSWORD')
+    link = os.environ.get('LINK')
+    
+    imperial = WebTesting(link=link)
+
+    imperial.log_in(user=user, password=pwd)
+
+    # Not ideal to add a timeout, but this gives enough time for the two factor authentication
+    time.sleep(15)
+
+
+    imperial.close_session()
