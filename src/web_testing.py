@@ -22,6 +22,7 @@ class WebTesting():
         """
         service = Service('./src/ChromeDriver/chromedriver')
         options = webdriver.ChromeOptions()
+        options.add_argument("--start-maximized")
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = webdriver.Chrome(service=service, options=options)
         self.driver.get(link)
@@ -87,10 +88,20 @@ class WebTesting():
         button_imperial_login_password = WebTesting.get_web_element(self.driver, x_path_imperial_login_password)
         WebTesting.send_keys_and_click_enter_from_element(button_imperial_login_password, password)
 
-    #TODO: Finish this method
-    def select_data_algo_module(self) -> None:
-        x_path_dat_algo = '//*[@id="main-content"]/section[3]/div/div/div/section/section[1]/div[2]/div/div/div[8]/div[2]/h3'
+    
+    def get_news_feed_dat_algo(self) -> None:
 
+        x_path_dat_algo_module = '//*[@id="main-content"]/section[3]/div/div/div/section/section[1]/div[2]/div/div/div[8]/div[2]/a'
+        dat_algo_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_dat_algo_module)
+        dat_algo_element.click()
+
+        x_path_news_feed = '//*[@id="navMenu"]/ul/li[2]/div/a/span'
+        news_feed_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_news_feed)
+        news_feed_element.click()
+
+        x_path_list_feeds = '//*[@id="main-content"]/section[2]/div/div/div[1]/div'
+        elements = self.driver.find_elements(By.XPATH, x_path_list_feeds)
+        print(elements)
 
     def close_session(self) -> None:
         """[summary]
@@ -109,7 +120,8 @@ if __name__ == '__main__':
     imperial.log_in(user=user, password=pwd)
 
     # Not ideal to add a timeout, but this gives enough time for the two factor authentication
-    time.sleep(15)
+    time.sleep(20)
 
+    imperial.get_news_feed_dat_algo()
 
     imperial.close_session()
