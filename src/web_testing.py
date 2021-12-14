@@ -89,7 +89,7 @@ class WebTesting():
         WebTesting.send_keys_and_click_enter_from_element(button_imperial_login_password, password)
 
     
-    def get_news_feed_dat_algo(self) -> None:
+    def get_latest_news_feed_of_module(self) -> None:
 
         x_path_dat_algo_module = '//*[@id="main-content"]/section[3]/div/div/div/section/section[1]/div[2]/div/div/div[8]/div[2]/a'
         dat_algo_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_dat_algo_module)
@@ -99,9 +99,10 @@ class WebTesting():
         news_feed_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_news_feed)
         news_feed_element.click()
 
-        x_path_list_feeds = '//*[@id="main-content"]/section[2]/div/div/div[1]/div'
-        elements = self.driver.find_elements(By.XPATH, x_path_list_feeds)
-        print(elements)
+        x_path_date_last_feed = '/html/body/div[1]/div/div[2]/section[2]/div/div/div[1]/div/section[1]/div/div/header/div/div[1]/article/div[2]/div/div[2]/span'
+        last_posted_date_element = WebTesting.get_web_element(driver=self.driver, x_path=x_path_date_last_feed)
+        last_posted_date_text = last_posted_date_element.text
+        print(last_posted_date_text)
 
     def close_session(self) -> None:
         """[summary]
@@ -122,6 +123,6 @@ if __name__ == '__main__':
     # Not ideal to add a timeout, but this gives enough time for the two factor authentication
     time.sleep(20)
 
-    imperial.get_news_feed_dat_algo()
+    imperial.get_latest_news_feed_of_module()
 
     imperial.close_session()
