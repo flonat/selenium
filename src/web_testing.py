@@ -134,7 +134,28 @@ class WebTesting():
         last_posted_name_text = last_posted_name_element.text
 
         return last_posted_name_text
-    
+
+
+    @staticmethod
+    def get_title_lastest_news_feed_of_module(driver:webdriver) -> str:
+        """[summary]
+
+        Parameters
+        ----------
+        driver : webdriver
+            [description]
+
+        Returns
+        -------
+        str
+            [description]
+        """
+        x_path_title_last_feed = '//*[@id="oC6bsXSsG"]/div[1]/h4' 
+        last_posted_title_element = WebTesting.get_web_element(driver=driver, x_path=x_path_title_last_feed)
+        last_posted_title_text = last_posted_title_element.text
+
+        return last_posted_title_text
+
 
     def append_date_of_las_posted_feed_to_csv(self):
         """[summary]
@@ -149,9 +170,10 @@ class WebTesting():
 
         last_feed_date_str = WebTesting.get_date_latest_news_feed_of_module(self.driver)
         last_feed_name_str = WebTesting.get_name_latest_news_feed_of_module(self.driver)
+        last_feed_title_str = WebTesting.get_title_lastest_news_feed_of_module(self.driver)
 
-        df = pd.DataFrame({'date_selenium_session': [session_date_str], 
-            'date_last_feed_posted': last_feed_date_str, 'name_last_feed_posted': last_feed_name_str})
+        df = pd.DataFrame({'date_selenium_session': [session_date_str], 'date_last_feed_posted': last_feed_date_str, 
+        'name_last_feed_posted': last_feed_name_str, 'title_last_feed_posted': last_feed_title_str})
         df.to_csv('src/report/report.csv', mode='a', sep=';', index=False, header=False)
         
 
